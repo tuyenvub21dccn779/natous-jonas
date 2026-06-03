@@ -1,9 +1,12 @@
 const fs = require('fs');
 const express = require('express');
 const { create } = require('domain');
+const morgan = require('morgan');
 
 const app = express();
 
+// 1) MIDDLEWARE
+app.use(morgan('dev'));
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -20,6 +23,7 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`),
 );
 
+// 2) ROUTE HANDLERS
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -104,10 +108,11 @@ const deleteTour = (req, res) => {
 
 // app.get('/api/v1/tours', getAllTours);
 // app.post('/api/v1/tours', createTour);
-app.get('/api/v1/tours/:id', getTour);
-app.patch('api/v1/tours/:id', updateTour);
-app.delete('api/v1/tours/:id', deleteTour);
+// app.get('/api/v1/tours/:id', getTour);
+// app.patch('api/v1/tours/:id', updateTour);
+// app.delete('api/v1/tours/:id', deleteTour);
 
+// 3) ROUTE
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
 app
@@ -116,6 +121,7 @@ app
   .patch(updateTour)
   .delete(deleteTour);
 
+// 4) START SERVER
 const port = 3000;
 app.listen(port, () => {
   console.log(`App running on port ${port}...`);
